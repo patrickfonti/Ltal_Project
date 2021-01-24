@@ -1,0 +1,264 @@
+---
+title: "plot Campbell"
+author: "Fonti"
+date: "23/01/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## LÖTSCHENTAL Campbell site by syte
+
+This is report to check the status of Ltal raw data. The report is from: 
+
+```{r}
+Sys.time()
+```
+
+```{r, include=FALSE}
+# This script of for making dyGraph
+
+library(tidyverse)
+library(dygraphs)
+library(xts)
+
+
+# Load data
+source('1.Import_FTP_data.R')
+head(DATA)
+
+
+```
+
+## Plots Dendrometer N08
+
+```{r dendro_N08, echo=FALSE}
+  SITE <- DATA[grep("N08",names(DATA))] %>%as.data.frame(col.names = "") %>%
+  mutate_at(grep("Avg",colnames(.)),funs(as.character)) %>%
+  mutate_at(grep("Avg",colnames(.)),funs(as.numeric)) %>%
+  mutate(TIMESTAMP = as.POSIXct(TIMESTAMP)) %>%
+  filter(TIMESTAMP > as.POSIXct('2020-01-01') & TIMESTAMP < as.POSIXct('2021-12-31'))
+
+  SITE %>%
+  select(starts_with("Dendr")) %>%
+  xts(SITE[,-1:-2], order.by=SITE[,1]) %>%
+  dygraph(main = "N08") %>% dyRangeSelector(height=50) %>%
+  dyOptions(fillGraph = FALSE) 
+```
+
+## Plots Sapflow N08
+
+```{r sap_N08, echo=FALSE}
+  SITE <- DATA[grep("N08",names(DATA))] %>%as.data.frame(col.names = "") %>%
+  mutate_at(grep("Avg",colnames(.)),funs(as.character)) %>%
+  mutate_at(grep("Avg",colnames(.)),funs(as.numeric)) %>%
+  mutate(TIMESTAMP = as.POSIXct(TIMESTAMP)) %>%
+  filter(TIMESTAMP > as.POSIXct('2020-01-01') & TIMESTAMP < as.POSIXct('2021-12-31'))
+
+  SITE %>%
+  select(starts_with("Granier")) %>%
+  xts(SITE[,-1:2], order.by=SITE[,1]) %>%
+  dygraph(main = "N08") %>% dyRangeSelector(height=50) %>%
+  dyOptions(fillGraph = TRUE) 
+```
+
+## Plots Dendrometer N13Da
+
+```{r dendro_N13Da, echo=FALSE}
+  SITE <- DATA[grep("N13Da",names(DATA))] %>%as.data.frame(col.names = "") %>%
+  mutate_at(grep("Avg",colnames(.)),funs(as.character)) %>%
+  mutate_at(grep("Avg",colnames(.)),funs(as.numeric)) %>%
+  mutate(TIMESTAMP = as.POSIXct(TIMESTAMP)) %>%
+  filter(TIMESTAMP > as.POSIXct('2020-01-01') & TIMESTAMP < as.POSIXct('2021-12-31'))
+
+  SITE %>%
+  select(starts_with("Dendr")) %>%
+  xts(SITE[,-1:-2], order.by=SITE[,1]) %>%
+  dygraph(main = "N13Da") %>% dyRangeSelector(height=50) %>%
+  dyOptions(fillGraph = FALSE) 
+```
+
+## Plots Sapflow N13Da
+
+```{r sap_N13Da, echo=FALSE}
+  SITE <- DATA[grep("N13Da",names(DATA))] %>%as.data.frame(col.names = "") %>%
+  mutate_at(grep("Avg",colnames(.)),funs(as.character)) %>%
+  mutate_at(grep("Avg",colnames(.)),funs(as.numeric)) %>%
+  mutate(TIMESTAMP = as.POSIXct(TIMESTAMP)) %>%
+  filter(TIMESTAMP > as.POSIXct('2020-01-01') & TIMESTAMP < as.POSIXct('2021-12-31'))
+
+  SITE %>%
+  select(starts_with("Granier")) %>%
+  xts(SITE[,-1:2], order.by=SITE[,1]) %>%
+  dygraph(main = "N13Da") %>% dyRangeSelector(height=50) %>%
+  dyOptions(fillGraph = TRUE) 
+```
+
+  
+## Plots Dendrometer N13Db
+
+```{r dendro_N13Db, echo=FALSE}
+  SITE <- DATA[grep("N13Db",names(DATA))] %>%as.data.frame(col.names = "") %>%
+  mutate_at(grep("Avg",colnames(.)),funs(as.character)) %>%
+  mutate_at(grep("Avg",colnames(.)),funs(as.numeric)) %>%
+  mutate(TIMESTAMP = as.POSIXct(TIMESTAMP)) %>%
+  filter(TIMESTAMP > as.POSIXct('2020-01-01') & TIMESTAMP < as.POSIXct('2021-12-31'))
+
+  SITE %>%
+  select(starts_with("Dendr")) %>%
+  xts(SITE[,-1:-2], order.by=SITE[,1]) %>%
+  dygraph(main = "N13Db") %>% dyRangeSelector(height=50) %>%
+  dyOptions(fillGraph = FALSE) 
+```
+
+## Plots Sapflow N13Db
+
+```{r sap_N13Db, echo=FALSE}
+  SITE <- DATA[grep("N13Db",names(DATA))] %>%as.data.frame(col.names = "") %>%
+  mutate_at(grep("Avg",colnames(.)),funs(as.character)) %>%
+  mutate_at(grep("Avg",colnames(.)),funs(as.numeric)) %>%
+  mutate(TIMESTAMP = as.POSIXct(TIMESTAMP)) %>%
+  filter(TIMESTAMP > as.POSIXct('2020-01-01') & TIMESTAMP < as.POSIXct('2021-12-31'))
+
+  SITE %>%
+  select(starts_with("Granier")) %>%
+  xts(SITE[,-1:2], order.by=SITE[,1]) %>%
+  dygraph(main = "N13Db") %>% dyRangeSelector(height=50) %>%
+  dyOptions(fillGraph = TRUE) 
+```
+
+  
+## Plots Dendrometer S16a
+
+```{r dendro_N16a, echo=FALSE}
+  SITE <- DATA[grep("S16a",names(DATA))] %>%as.data.frame(col.names = "") %>%
+  mutate_at(grep("Avg",colnames(.)),funs(as.character)) %>%
+  mutate_at(grep("Avg",colnames(.)),funs(as.numeric)) %>%
+  mutate(TIMESTAMP = as.POSIXct(TIMESTAMP)) %>%
+  filter(TIMESTAMP > as.POSIXct('2020-01-01') & TIMESTAMP < as.POSIXct('2021-12-31'))
+
+  SITE %>%
+  select(starts_with("Dendr")) %>%
+  xts(SITE[,-1:-2], order.by=SITE[,1]) %>%
+  dygraph(main = "S16a") %>% dyRangeSelector(height=50) %>%
+  dyOptions(fillGraph = FALSE) 
+```
+
+## Plots Sapflow S16a
+
+```{r sap_N16a, echo=FALSE}
+  SITE <- DATA[grep("S16a",names(DATA))] %>%as.data.frame(col.names = "") %>%
+  mutate_at(grep("Avg",colnames(.)),funs(as.character)) %>%
+  mutate_at(grep("Avg",colnames(.)),funs(as.numeric)) %>%
+  mutate(TIMESTAMP = as.POSIXct(TIMESTAMP)) %>%
+  filter(TIMESTAMP > as.POSIXct('2020-01-01') & TIMESTAMP < as.POSIXct('2021-12-31'))
+
+  SITE %>%
+  select(starts_with("Granier")) %>%
+  xts(SITE[,-1:2], order.by=SITE[,1]) %>%
+  dygraph(main = "S16a") %>% dyRangeSelector(height=50) %>%
+  dyOptions(fillGraph = TRUE) 
+```
+
+  
+## Plots Dendrometer S16b
+
+```{r dendro_N16b, echo=FALSE}
+  SITE <- DATA[grep("S16b",names(DATA))] %>%as.data.frame(col.names = "") %>%
+  mutate_at(grep("Avg",colnames(.)),funs(as.character)) %>%
+  mutate_at(grep("Avg",colnames(.)),funs(as.numeric)) %>%
+  mutate(TIMESTAMP = as.POSIXct(TIMESTAMP)) %>%
+  filter(TIMESTAMP > as.POSIXct('2020-01-01') & TIMESTAMP < as.POSIXct('2021-12-31'))
+
+  SITE %>%
+  select(starts_with("Dendr")) %>%
+  xts(SITE[,-1:-2], order.by=SITE[,1]) %>%
+  dygraph(main = "S16b") %>% dyRangeSelector(height=50) %>%
+  dyOptions(fillGraph = FALSE) 
+```
+
+## Plots Sapflow S16b
+
+```{r sap_N16b, echo=FALSE}
+  SITE <- DATA[grep("S16b",names(DATA))] %>%as.data.frame(col.names = "") %>%
+  mutate_at(grep("Avg",colnames(.)),funs(as.character)) %>%
+  mutate_at(grep("Avg",colnames(.)),funs(as.numeric)) %>%
+  mutate(TIMESTAMP = as.POSIXct(TIMESTAMP)) %>%
+  filter(TIMESTAMP > as.POSIXct('2020-01-01') & TIMESTAMP < as.POSIXct('2021-12-31'))
+
+  SITE %>%
+  select(starts_with("Granier")) %>%
+  xts(SITE[,-1:2], order.by=SITE[,1]) %>%
+  dygraph(main = "S16b") %>% dyRangeSelector(height=50) %>%
+  dyOptions(fillGraph = TRUE) 
+```
+
+  
+## Plots Dendrometer S19
+
+```{r dendro_S19, echo=FALSE}
+  SITE <- DATA[grep("S19",names(DATA))] %>%as.data.frame(col.names = "") %>%
+  mutate_at(grep("Avg",colnames(.)),funs(as.character)) %>%
+  mutate_at(grep("Avg",colnames(.)),funs(as.numeric)) %>%
+  mutate(TIMESTAMP = as.POSIXct(TIMESTAMP)) %>%
+  filter(TIMESTAMP > as.POSIXct('2020-01-01') & TIMESTAMP < as.POSIXct('2021-12-31'))
+
+  SITE %>%
+  select(starts_with("Dendr")) %>%
+  xts(SITE[,-1:-2], order.by=SITE[,1]) %>%
+  dygraph(main = "S19") %>% dyRangeSelector(height=50) %>%
+  dyOptions(fillGraph = FALSE) 
+```
+
+## Plots Sapflow S19
+
+```{r sap_S19, echo=FALSE}
+  SITE <- DATA[grep("S19",names(DATA))] %>%as.data.frame(col.names = "") %>%
+  mutate_at(grep("Avg",colnames(.)),funs(as.character)) %>%
+  mutate_at(grep("Avg",colnames(.)),funs(as.numeric)) %>%
+  mutate(TIMESTAMP = as.POSIXct(TIMESTAMP)) %>%
+  filter(TIMESTAMP > as.POSIXct('2020-01-01') & TIMESTAMP < as.POSIXct('2021-12-31'))
+
+  SITE %>%
+  select(starts_with("Granier")) %>%
+  xts(SITE[,-1:2], order.by=SITE[,1]) %>%
+  dygraph(main = "S19") %>% dyRangeSelector(height=50) %>%
+  dyOptions(fillGraph = TRUE) 
+```
+
+  
+## Plots Dendrometer S22
+
+```{r dendro_S22, echo=FALSE}
+  SITE <- DATA[grep("S22",names(DATA))] %>%as.data.frame(col.names = "") %>%
+  mutate_at(grep("Avg",colnames(.)),funs(as.character)) %>%
+  mutate_at(grep("Avg",colnames(.)),funs(as.numeric)) %>%
+  mutate(TIMESTAMP = as.POSIXct(TIMESTAMP)) %>%
+  filter(TIMESTAMP > as.POSIXct('2020-01-01') & TIMESTAMP < as.POSIXct('2021-12-31'))
+
+  SITE %>%
+  select(starts_with("Dendr")) %>%
+  xts(SITE[,-1:-2], order.by=SITE[,1]) %>%
+  dygraph(main = "S22") %>% dyRangeSelector(height=50) %>%
+  dyOptions(fillGraph = FALSE) 
+```
+
+## Plots Sapflow S22
+
+```{r sap_S22, echo=FALSE}
+  SITE <- DATA[grep("S22",names(DATA))] %>%as.data.frame(col.names = "") %>%
+  mutate_at(grep("Avg",colnames(.)),funs(as.character)) %>%
+  mutate_at(grep("Avg",colnames(.)),funs(as.numeric)) %>%
+  mutate(TIMESTAMP = as.POSIXct(TIMESTAMP)) %>%
+  filter(TIMESTAMP > as.POSIXct('2020-01-01') & TIMESTAMP < as.POSIXct('2021-12-31'))
+
+  SITE %>%
+  select(starts_with("Granier")) %>%
+  xts(SITE[,-1:2], order.by=SITE[,1]) %>%
+  dygraph(main = "S22") %>% dyRangeSelector(height=50) %>%
+  dyOptions(fillGraph = TRUE) 
+```
+
+  
