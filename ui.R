@@ -37,7 +37,7 @@ thematic_on(bg = '#202123', fg = 'white', accent = 'red', font = "Indie Flower")
 
 
 # Load data
-#source('1.Import_FTP_data.R')
+source('1.Import_FTP_data.R')
 #DATA <- DATA
 #head(DATA)
 
