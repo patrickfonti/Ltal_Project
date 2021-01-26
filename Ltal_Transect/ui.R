@@ -13,6 +13,7 @@ library(shinythemes)
 library(bslib)
 library(thematic)
 library(ggplot2)
+library(tidyr)
 
 # add bslib thematic
 material <- bs_theme(
