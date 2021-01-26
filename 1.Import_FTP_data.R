@@ -2,7 +2,8 @@
 # This is to test connection to ftp of WSL
 # this are the data from Matthias
 
-library(tidyverse)
+library(dplyr)
+library(purrr)
 
 #### Functions #####
 
