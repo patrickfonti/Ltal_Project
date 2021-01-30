@@ -12,7 +12,6 @@ server <- function(input, output) {
     validate(need(input$date[1] < input$date[2], "Error: Start date should be earlier than end date."))
     
     SITE.long.temp <- DATA[grep(input$site,names(DATA))] %>% 
-#      DATA[grep('S22',names(DATA))] %>% 
       as.data.frame(col.names = "") %>%
       mutate(TIMESTAMP = as.POSIXct(TIMESTAMP)) %>%
       mutate_at(grep("Avg",colnames(.)),funs(as.character)) %>%
