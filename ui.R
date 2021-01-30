@@ -7,13 +7,6 @@
 # remotes::install_github("rstudio/thematic")
 # remotes::install_github("rstudio/dygraphs")
 
-# Load packages
-library(shiny)
-library(shinythemes)
-library(bslib)
-library(thematic)
-library(ggplot2)
-library(tidyr)
 
 # add bslib thematic
 material <- bs_theme(
@@ -36,16 +29,13 @@ thematic_on(bg = '#202123', fg = 'white', accent = 'red', font = "Indie Flower")
 
 
 
-# Load data
-source('1.Import_FTP_data.R')
-#DATA <- DATA
-#head(DATA)
-
-extract <- function(x) {unlist(strsplit((x),'_'))[[2]]}
 
 # Define UI for application that draws a Dygraph plot
 # ui <- fluidPage(theme = shinytheme("lumen"),
 ui <- fluidPage(theme = material,
+#  tags$head(
+#    tags$link(rel = "stylesheet", type = "text/css", href = "Google_Font.css")
+#  ),
   titlePanel("Campbell data from Lötschental sites"),
   sidebarLayout(
     sidebarPanel(
@@ -58,7 +48,7 @@ ui <- fluidPage(theme = material,
       
       # Select date range to be plotted
       dateRangeInput("date", strong("Date range"), start = "2020-01-01", end = "2021-07-31",
-        min = "2020-01-01", max = "2021-07-31"),
+        min = "2020-01-01", max = "2021-07-31")
       
       # # Select whether to overlay smooth trend line
       # checkboxInput(inputId = "smoother", label = strong("Overlay smooth trend line"), value = FALSE),
