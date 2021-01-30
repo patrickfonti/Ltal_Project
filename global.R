@@ -41,7 +41,7 @@ import_FTP <- function(file, url, userpwd) {
     gsub("\r\n","\n", .) %>%
     read_delim(file=., delim=",",  skip=1, col_names = TRUE) %>%
     filter(row_number() != c(1,2)) %>% 
-    write_csv(x=. ,path=paste0(temp_directory,file), col_names = TRUE, append=TRUE) 
+    write_csv(x=. ,path=paste0(temp_directory,file), col_names = TRUE, append=FALSE) 
   return(File)
 }
 
@@ -64,7 +64,7 @@ extract <- function(x) {unlist(strsplit((x),'_'))[[2]]}
 # Connect to FTP
 source('pw_FTP.R')
 filenames <- unlist(strsplit(c(getURL(url, userpwd = userpwd,
-  ftp.use.epsv = FALSE,dirlistonly = TRUE)),"[\n]"))
+                                      ftp.use.epsv = FALSE,dirlistonly = TRUE)),"[\n]"))
 
 # Collect list of files names
 filelist<- filenames[grep(pattern= "Table1", filenames)]
@@ -83,4 +83,3 @@ if(Sys.info()['nodename'] == "lema.wsl.ch" | Sys.info()['nodename'] == "lema.loc
     names(DATA) <- filelist
   }
 }
-
