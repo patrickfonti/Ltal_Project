@@ -12,6 +12,7 @@ library(tidyr)
 library(dplyr)
 library(purrr)
 library(readr)
+library(tibble)
 
 
 
@@ -27,15 +28,22 @@ library(readr)
 #' @export
 #'
 #' @examples
-# import_FTP <- function(file, url, userpwd) {
-#   File <- getURL(paste0(url,'/',file), userpwd = userpwd, connecttimeout = 60) %>%
-#     gsub("\r\n","\n", .) %>%
-#     #read.table(text=., sep=",",  skip=1, header=TRUE) %>%
-#     read_delim(file=., delim=",",  skip=1, col_names = TRUE) %>%
-#     filter(row_number() != c(1,2)) %>% 
-#     write_delim(.,paste0(temp_directory,file), append = TRUE)
-#   return(File)
-# }
+import_FTP <- function(file, url, userpwd) {
+  if(Sys.info()['nodename'] == "lema.wsl.ch" | Sys.info()['nodename'] == "lema.local") {
+    temp_directory <- '/Volumes/Fonti/data/'
+  } else {
+    if(Sys.info()['nodename'] %in% "shiny15") {
+      temp_directory <- '/home/fonti/data/ltal/'
+    }
+  }
+  
+  File <- getURL(paste0(url,'/',file), userpwd = userpwd, connecttimeout = 60) %>%
+    gsub("\r\n","\n", .) %>%
+    read_delim(file=., delim=",",  skip=1, col_names = TRUE) %>%
+    filter(row_number() != c(1,2)) %>% 
+    write_csv(x=. ,path=paste0(temp_directory,file), col_names = TRUE, append=TRUE) 
+  return(File)
+}
 
 #' Title
 #'
@@ -48,28 +56,10 @@ library(readr)
 extract <- function(x) {unlist(strsplit((x),'_'))[[2]]}
 
 
-import_FTP <- function(file, url, userpwd) {
-  File <- getURL(paste0(url,'/',file), userpwd = userpwd, connecttimeout = 60) %>%
-    gsub("\r\n","\n", .) %>%
-    read_delim(file=., delim=",",  skip=1, col_names = TRUE) %>%
-    filter(row_number() != c(1,2)) %>%
-    write_delim(.,paste0(temp_directory,file), append=TRUE)
-  return(File)
-}
 
 
 
 ##### 2. Import DATA #####
-
-if(Sys.info()['nodename'] == "lema.wsl.ch") {
-  temp_directory <- '/Volumes/Fonti/data/'
-} else {
-  if(Sys.info()['nodename'] %in% "shiny15") {
-    temp_directory <- '/home/fonti/data/ltal/'
-  }
-}
-
-
 
 # Connect to FTP
 source('pw_FTP.R')
@@ -80,14 +70,17 @@ filenames <- unlist(strsplit(c(getURL(url, userpwd = userpwd,
 filelist<- filenames[grep(pattern= "Table1", filenames)]
 filelist
 
-# Import data on Home/Fonti/data from files in the filelist
-if(Sys.info()['nodename'] == "lema.wsl.ch") {
+# Import data on home/fonti/data from files in the filelist
+upload<- function(x) {read_delim(x, delim=",", col_names = TRUE)}
+
+if(Sys.info()['nodename'] == "lema.wsl.ch" | Sys.info()['nodename'] == "lema.local") {
   DATA <- map(filelist,import_FTP,url=url, userpwd = userpwd)
   names(DATA) <- filelist
 } else {
   if(Sys.info()['nodename'] %in% "shiny15") {
-  DATA <- map(filelist, readr(paste0(temp_directory,.)))
-  names(DATA) <- filelist
+    DATA <- map(filelist,import_FTP,url=url, userpwd = userpwd)
+    DATA <- map(paste0(temp_directory,filelist), upload)
+    names(DATA) <- filelist
   }
 }
 
