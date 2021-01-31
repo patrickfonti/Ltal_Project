@@ -15,7 +15,6 @@ library(readr)
 library(tibble)
 
 
-
 ##### 1. Functions ######
 
 #' This function connect to the FTP of WSL and import the data from the 
