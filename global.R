@@ -29,14 +29,6 @@ library(tibble)
 #'
 #' @examples
 import_FTP <- function(file, url, userpwd) {
-  if(Sys.info()['nodename'] == "lema.wsl.ch" | Sys.info()['nodename'] == "lema.local") {
-    temp_directory <- '/Volumes/Fonti/data/'
-  } else {
-    if(Sys.info()['nodename'] %in% "shiny15") {
-      temp_directory <- '/home/fonti/data/ltal/'
-    }
-  }
-  
   File <- getURL(paste0(url,'/',file), userpwd = userpwd, connecttimeout = 60) %>%
     gsub("\r\n","\n", .) %>%
     read_delim(file=., delim=",",  skip=1, col_names = TRUE) %>%
@@ -55,11 +47,30 @@ import_FTP <- function(file, url, userpwd) {
 #' @examples
 extract <- function(x) {unlist(strsplit((x),'_'))[[2]]}
 
+#' Title
+#'
+#' @param x 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+upload<- function(x) {read_delim(x, delim=",", col_names = TRUE)}
 
 
 
 
 ##### 2. Import DATA #####
+
+# define working directory to write files
+if(Sys.info()['nodename'] == "lema.wsl.ch" | Sys.info()['nodename'] == "lema.local") {
+  temp_directory <- '/Volumes/Fonti/data/'
+} else {
+  if(Sys.info()['nodename'] %in% "shiny15") {
+    temp_directory <- '/home/fonti/data/ltal/'
+  }
+}
+
 
 # Connect to FTP
 source('pw_FTP.R')
@@ -71,7 +82,6 @@ filelist<- filenames[grep(pattern= "Table1", filenames)]
 filelist
 
 # Import data on home/fonti/data from files in the filelist
-upload<- function(x) {read_delim(x, delim=",", col_names = TRUE)}
 
 if(Sys.info()['nodename'] == "lema.wsl.ch" | Sys.info()['nodename'] == "lema.local") {
   DATA <- map(filelist,import_FTP,url=url, userpwd = userpwd)
