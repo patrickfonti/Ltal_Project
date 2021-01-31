@@ -47,8 +47,8 @@ ui <- fluidPage(theme = material,
         selected = "N08b"),
       
       # Select date range to be plotted
-      dateRangeInput("date", strong("Date range"), start = "2020-01-01", end = "2021-07-31",
-        min = "2020-01-01", max = "2021-07-31")
+      dateRangeInput("date", strong("Date range"), start = "2020-01-01", end = Sys.Date(),
+        min = "2020-01-01", max = Sys.Date()) #"2021-07-31"
       
       # # Select whether to overlay smooth trend line
       # checkboxInput(inputId = "smoother", label = strong("Overlay smooth trend line"), value = FALSE),
