@@ -80,7 +80,8 @@ upload<- function(x) {read_delim(x, delim=",", col_names = TRUE)}
 ##### 2. Import DATA #####
 
 # define working directory to write files
-  if(Sys.info()['nodename'] %in% "shiny15") {
+if(Sys.info()['nodename'] %in% "shiny15") {
+  if (!dir.exists('/home/fonti/data/ltal')) {'/home/fonti/data/ltal'}
     temp_directory <- '/home/fonti/data/ltal/'
   }
 
