@@ -62,7 +62,17 @@ import_FTP1 <- function(file, url, userpwd) {
 #' @export
 #'
 #' @examples
-extract <- function(x) {unlist(strsplit((x),'_'))[[2]]}
+extract1 <- function(x) {unlist(strsplit((x),'_'))[[1]]}
+
+#' Title
+#'
+#' @param x is a vector of characters that need to be split
+#'
+#' @return
+#' @export
+#'
+#' @examples
+extract2 <- function(x) {unlist(strsplit((x),'_'))[[2]]}
 
 #' Title
 #'
@@ -75,9 +85,11 @@ extract <- function(x) {unlist(strsplit((x),'_'))[[2]]}
 upload<- function(x) {read_delim(x, delim=",", col_names = TRUE)}
 
 
+##### 2. Import data for setting plot in Home
+Setting <- read_csv("data/Setting.csv")
 
 
-##### 2. Import DATA #####
+##### 3. Import DATA Campbell #####
 
 # define working directory to write files
 if(Sys.info()['nodename'] %in% "shiny15") {
@@ -107,3 +119,21 @@ if(Sys.info()['nodename'] == "lema.wsl.ch" | Sys.info()['nodename'] == "lema.loc
     names(DATA) <- filelist
   }
 }
+
+
+##### 4. Import DATA Deendrometers #####
+
+# Connect to Ltal clean Folder
+DENDRO<-read_delim("~/Desktop/Ltal/Ltal DATA/Dendro/data/2. Clean/all.DENDRO_havg.txt", delim="\t", col_names=TRUE, col_types = cols(.default = "d", Index = "T"))
+
+# Import data on home/fonti/data from files in the filelist
+upload<- function(x) {read_delim(x, delim=",", col_names = TRUE)}
+
+if(Sys.info()['nodename'] == "lema.wsl.ch" | Sys.info()['nodename'] == "lema.local") {
+  write_csv(x=DENDRO ,path=paste0(getwd(),"/data/DENDRO.csv"), col_names = TRUE) 
+} else {
+  write_csv(x=DENDRO ,path='/home/fonti/data/ltal/DENDRO.csv', col_names = TRUE) 
+}
+
+
+

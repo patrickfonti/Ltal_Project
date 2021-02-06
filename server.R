@@ -60,6 +60,23 @@ server <- function(input, output) {
       ungroup() %>% as.data.frame()
       })
     
+    
+    selected_siteD <- reactive({
+      req(input$dateD)
+      validate(need(!is.na(input$dateD[1]) & !is.na(input$dateD[2]), "Error: Please provide both a start and an end date."))
+      validate(need(input$dateD[1] < input$dateD[2], "Error: Start date should be earlier than end date."))
+      
+      SITE.long.DENDRO <- DENDRO %>% 
+        select(Index, grep(input$siteD,names(DENDRO))) %>% 
+        filter(Index > as.POSIXct(input$dateD[1]) & Index < as.POSIXct(input$dateD[2])) %>% 
+        pivot_longer(cols=- Index, names_to = 'Sensor') %>% 
+        mutate(value = as.numeric(as.double(value)), Sensor = factor(Sensor)) %>%
+        group_by(Sensor) %>% 
+        mutate(value = value - mean(value, na.rm=TRUE)) %>% 
+        #  mutate(value = scale(value)) %>%
+        ungroup() %>% as.data.frame() 
+    })
+    
     # SITE.long <- SITE %>%
     #   select(c(TIMESTAMP, starts_with("Dendr"))) %>%
     #   pivot_longer(starts_with("Dendr"), names_to = 'Sensor') %>%
@@ -121,10 +138,40 @@ server <- function(input, output) {
         geom_line() + ylab("Sap density") + xlab("") + theme(legend.position="bottom")
   })
 
-  }
+  # Create ggplot object the plotOutput function is expecting
+   output$ggplot.DENDRO <- renderPlot({
+    if((input$species=="L" | input$species=="S") & (input$type=="c" | input$type=="p")) {
+    ggplot(selected_siteD() %>% filter(grepl(paste0("_",input$species), Sensor)) %>% filter(grepl(input$type, Sensor)), aes(x= Index, y= value , colour=Sensor)) + 
+      geom_line() + ylab("DeltaR") + xlab("") + theme(legend.position="bottom")
+    } else {
+      if((input$species=="both") & (input$type=="c" | input$type=="p")) {
+      ggplot(selected_siteD() %>% filter(grepl(input$type, Sensor)), aes(x= Index, y= value , colour=Sensor)) + 
+        geom_line() + ylab("DeltaR") + xlab("") + theme(legend.position="bottom")
+      } else {
+        if((input$species=="L" | input$species=="S") & input$type=="both") {
+          ggplot(selected_siteD() %>% filter(grepl(paste0("_",input$species), Sensor)), aes(x= Index, y= value , colour=Sensor)) + 
+            geom_line() + ylab("DeltaR") + xlab("") + theme(legend.position="bottom")
+        } else
+          if((input$type=="both") & input$type=="both") {
+            ggplot(selected_siteD(), aes(x= Index, y= value , colour=Sensor)) + 
+              geom_line() + ylab("DeltaR") + xlab("") + theme(legend.position="bottom")
+          }
+      }
+    }
+  })
+  
 
   #   ########
 
+  # Create ggplot object showing the setting
+  
+  output$ggplot.setting <- renderPlot({
+    ggplot(Setting, aes(x=X, y=Elevation, col="orange")) +
+      geom_line() + ylab("Elevation") + xlab("") +
+      geom_label(aes(x=X, y = Elevation, label=Site)) + theme(legend.position = "none")
+  })
+
+}
 
 
 # # Create Dygraph object the plotOutput function is expecting
