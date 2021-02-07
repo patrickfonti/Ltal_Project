@@ -9,9 +9,36 @@ selected_siteD <- reactive({
     pivot_longer( -Index, names_to = 'Sensor') %>%
     mutate(value = as.numeric(as.character(value)), Sensor = factor(Sensor)) %>%
     group_by(Sensor) %>%
-    #mutate(value = value - mean(value)) %>%
+    mutate(value = scale(value, scale=FALSE)) %>%
     ungroup()
   
+})
+
+###### TRW and GROWTH 
+selected_TRW <- reactive({
+  L.LONG <- DENDRO %>% 
+    select(Index, grep(input$siteD,names(DENDRO))) %>% 
+    filter(Index > as.POSIXct(paste0("01",input$slider[1]),format="%d%b%Y",tz="UTC") & Index < as.POSIXct(paste0("25",input$slider[2]),format="%d%b%Y",tz="UTC")) %>% 
+    pivot_longer(- Index, names_to = 'Sensor') %>% 
+    mutate(value = as.numeric(as.double(value)), Sensor = factor(Sensor)) %>%
+    mutate(
+      h = as.numeric(format(as.POSIXct(Index), format="%H",tz="CET")),
+      d = as.numeric(format(as.POSIXct(Index), "%d",tz="CET")),
+      m = ordered(as.factor(format(as.POSIXct(Index), "%b",tz="CET")),month.abb),
+      year = as.numeric(format(as.POSIXct(Index), "%Y",tz="CET")),
+      doy = as.numeric(format(as.POSIXct(Index), "%j",tz="CET")),
+      species = substr(as.character(Sensor), nchar(as.character(Sensor))-2,nchar(as.character(Sensor))-2),
+      type = substr(as.character(Sensor), nchar(as.character(Sensor)),nchar(as.character(Sensor)))) %>%  
+    group_by(Sensor,year,doy,species,type) %>%
+    mutate(centered_value = value-min(value)) %>%
+    ungroup() %>% 
+    filter(!is.na(value)) %>%
+  group_by(Sensor, year) %>%
+  mutate(cuMax = cummax(value), 
+    growth.inc = c(diff(lag(cuMax)),NA), 
+    growth.cum = cumsum(ifelse(is.na(growth.inc), 0, growth.inc)) + growth.inc*0,
+    TWD:=value-cuMax) %>% 
+  ungroup() 
 })
 
 
@@ -22,9 +49,6 @@ selected_cycle <- reactive({
     filter(Index > as.POSIXct(paste0("01",input$slider[1]),format="%d%b%Y",tz="UTC") & Index < as.POSIXct(paste0("25",input$slider[2]),format="%d%b%Y",tz="UTC")) %>% 
     pivot_longer(- Index, names_to = 'Sensor') %>% 
     mutate(value = as.numeric(as.double(value)), Sensor = factor(Sensor)) %>%
-    group_by(Sensor) %>% 
-    # mutate(value = value - mean(value)) %>% 
-    ungroup() %>%
     mutate(
       h = as.numeric(format(as.POSIXct(Index), format="%H",tz="CET")),
       d = as.numeric(format(as.POSIXct(Index), "%d",tz="CET")),
@@ -39,7 +63,7 @@ selected_cycle <- reactive({
     group_by(Sensor,h,m,species,type) %>%
     summarise(value = mean(centered_value,na.rm=TRUE)) %>%
     ungroup()
-  print(DENDRO.cycle)
+ 
 })
 
 
@@ -69,6 +93,32 @@ output$ggplot.DENDRO <- renderPlot({
   }
 })
 
+
+# ggplot TRW
+output$ggplot.TRW <- renderPlot({
+#  if(input$showTWD == TRUE) {
+  if((input$species=="L" | input$species=="S") & (input$type=="c" | input$type=="p")) {
+    ggplot(selected_TRW() %>% filter(grepl(paste0("_",input$species), Sensor)) %>% filter(grepl(input$type, Sensor)), aes(x=Index, y=TWD, colour=Sensor)) +
+      geom_line() + ylab("DeltaR") + xlab("") + theme(legend.position="bottom")
+  } else {
+    if((input$species=="both") & (input$type=="c" | input$type=="p")) {
+      ggplot(selected_TRW() %>% filter(grepl(input$type, Sensor)), aes(x=Index, y=TWD, colour=Sensor)) +
+        geom_line() + ylab("DeltaR") + xlab("") + theme(legend.position="bottom")
+    } else {
+      if((input$species=="L" | input$species=="S") & input$type=="both") {
+        ggplot(selected_TRW() %>% filter(grepl(paste0("_",input$species), Sensor)), aes(x=Index, y=TWD, colour=Sensor)) +
+          geom_line() + ylab("DeltaR") + xlab("") + theme(legend.position="bottom")
+      } else
+        if((input$type=="both") & input$type=="both") {
+          ggplot(selected_TRW(), aes(x=Index, y=TWD, colour=Sensor)) +
+            geom_line() + ylab("DeltaR") + xlab("") + theme(legend.position="bottom")
+        }
+    }
+  }
+#    }
+})
+
+    
 
 # ggplot CYCLES
 output$ggplot.CYCLE <- renderPlot({

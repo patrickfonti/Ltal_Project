@@ -88,7 +88,7 @@ ui <- bootstrapPage(theme = material,
             radioButtons("type", "Select type", choices=c("p","c","both"), selected="p"),
             
             # Select whether to scale
-            checkboxInput(inputId = "scale", label = strong("Scale among dendrometers"), value = FALSE) #,
+            checkboxInput(inputId = "showTWD", label = strong("Show TWD"), value = FALSE) #,
 
             # Display only if the smoother is checked
             # conditionalPanel(condition = "input.smoother == true",
@@ -105,6 +105,9 @@ ui <- bootstrapPage(theme = material,
             selected   = c(min(format(DENDRO$Index, format="%b%Y")), max(format(DENDRO$Index, format="%b%Y"))),
             grid = FALSE, width = "100%"),
           plotOutput(outputId = "ggplot.DENDRO", height = "300px"),
+          # Display only if the smoother is checked
+          conditionalPanel(condition = "input.showTWD == true",
+            plotOutput(outputId = "ggplot.TRW", height = "300px")),
           plotOutput(outputId = "ggplot.CYCLE", height = "300px")
           # Select slider date range to be plotted
           
