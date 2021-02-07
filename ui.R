@@ -32,7 +32,8 @@ ui <- bootstrapPage(theme = material,
       sidebarLayout( 
         sidebarPanel(),
         mainPanel(
-          plotOutput(outputId = "ggplot.setting", height = "300px")
+          plotOutput(outputId = "ggplot.setting", height = "300px"),
+          tags$a(href = "https://www.wsl.ch/en/tree-ring-research/the-loetschental-tree-growth-monitoring-transect.html", "Source: Lötschental transect", target = "_blank")
           ) 
         )
   ),
@@ -43,10 +44,7 @@ ui <- bootstrapPage(theme = material,
       sidebarLayout(
         sidebarPanel(
           # Select type of trend to plot
-          selectizeInput(inputId = "site", label = strong("Site"),
-            #choices = substr(names(DATA),5,9),
-            choices = unlist(lapply(names(DATA), FUN=extract2)),
-            selected = "N08b"),
+          selectizeInput(inputId = "site", label = strong("Site"), choices = unlist(lapply(names(DATA), FUN=extract2)), selected = "N08b"),
           
           # Select date range to be plotted
           dateRangeInput("date", strong("Date range"), start = "2020-01-01", end = Sys.Date(),
@@ -69,28 +67,25 @@ ui <- bootstrapPage(theme = material,
           plotOutput(outputId = "ggplot.Batt", height = "150px"),
           plotOutput(outputId = "ggplot.Temp", height = "150px"),
           plotOutput(outputId = "ggplot.Dendro", height = "250px"),
-          plotOutput(outputId = "ggplot.Sapflow", height = "250px"),
-          tags$a(href = "https://www.wsl.ch/en/tree-ring-research/the-loetschental-tree-growth-monitoring-transect.html", "Source: Lötschental transect", target = "_blank")
+          plotOutput(outputId = "ggplot.Sapflow", height = "250px")
         )
       )) ,
-  # Dendrometer ----------------------------------------------------------------------
+    
+  # Dendrometers ----------------------------------------------------------------------
     tabPanel('Dendrometers', icon=icon("chart-line", lib = "font-awesome"),
       titlePanel("Dendrometer data 2007-2020"),
         sidebarLayout(
           sidebarPanel(
             # Select type of trend to plot
-            selectizeInput(inputId = "siteD", label = strong("Site"),
-              #choices = substr(names(DATA),5,9),
-              choices = c(Setting$Site), #unlist(lapply(names(DENDRO), FUN=extract1)),
-              selected = "N08"),
+            selectizeInput(inputId = "siteD", label = strong("Site"), choices = c(Setting$Site), selected = "N08"),
             
-            # Select date range to be plotted
-            dateRangeInput("dateD", strong("Date range"), start = "2018-01-01", end = "2020-12-31",
-              min = "2006-01-01", max = Sys.Date()), #"2021-07-31"
+            # # Select date range to be plotted
+            # dateRangeInput("dateD", strong("Date range"), start = "2018-01-01", end = "2020-12-31",
+            #   min = "2006-01-01", max = Sys.Date()), #"2021-07-31"
             
             # Select species and dendrometer plotted
-            radioButtons("species", "Select species", choices=c("L","S","both"), selected="both"),
-            radioButtons("type", "Select type", choices=c("p","c","both"), selected="both"),
+            radioButtons("species", "Select species", choices=c("L","S","both"), selected="L"),
+            radioButtons("type", "Select type", choices=c("p","c","both"), selected="p"),
             
             # Select whether to scale
             checkboxInput(inputId = "scale", label = strong("Scale among dendrometers"), value = FALSE) #,
@@ -103,14 +98,22 @@ ui <- bootstrapPage(theme = material,
             #   HTML("Higher values give more smoothness.")
             # )
           ),
-        mainPanel(plotOutput(outputId = "ggplot.DENDRO", height = "600px")) )
-      )
+          
+        mainPanel(
+          shinyWidgets::sliderTextInput(inputId = "slider", label = "Time",
+            choices    = unique(format(DENDRO$Index, format="%b%Y")),
+            selected   = c(min(format(DENDRO$Index, format="%b%Y")), max(format(DENDRO$Index, format="%b%Y"))),
+            grid = FALSE, width = "100%"),
+          plotOutput(outputId = "ggplot.DENDRO", height = "300px"),
+          plotOutput(outputId = "ggplot.CYCLE", height = "300px")
+          # Select slider date range to be plotted
+          
+          ) 
+          )
+      ) # END TAB PANEL
   
     
 ) # END TABSET
   
-)
+) # END UI
 
-
-
-# dygraphOutput(outputId = "dygraph", height = "300px"),
