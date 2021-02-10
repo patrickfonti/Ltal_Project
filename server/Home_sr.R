@@ -11,10 +11,10 @@ output$ggplot.setting <- renderPlotly({
   return(fig)
   })
 
-# output$plotly_click <- renderPrint({
-#   
-#   event_data("plotly_click")
-# })
+output$plotly_click <- renderPrint({
+
+  event_data("plotly_click")
+})
 
 
 # observeEvent(event_data("plotly_click", source = "site_select"), {
