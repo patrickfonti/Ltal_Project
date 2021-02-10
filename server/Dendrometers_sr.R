@@ -1,6 +1,5 @@
 # Dendrometers 2006-2020
 
-
 # DENDROMETER
 selected_siteD <- reactive({
   SITE.long.DENDRO <- DENDRO %>%
@@ -11,7 +10,7 @@ selected_siteD <- reactive({
     group_by(Sensor) %>%
     mutate(value = scale(value, scale=FALSE)) %>%
     ungroup()
-  
+   # print(names(DENDRO))
 })
 
 ###### TRW and GROWTH 

@@ -19,7 +19,7 @@ material <- bs_theme(
 # bs_theme_preview(material, with_themer = TRUE)
 
 # Add thematic for ggplot
-thematic_on(bg = '#202123', fg = 'white', accent = 'red', font = "Indie Flower")
+thematic_on(bg = '#202123', fg = 'white', accent = 'auto', font =  font_spec("Indie Flower", scale = 2))
 
 
 ######### SHINY.UI #########
@@ -32,7 +32,8 @@ ui <- bootstrapPage(theme = material,
       sidebarLayout( 
         sidebarPanel(),
         mainPanel(
-          plotOutput(outputId = "ggplot.setting", height = "300px"),
+          plotlyOutput(outputId = "ggplot.setting", height = "300px"),
+          verbatimTextOutput("plotly_click"),
           tags$a(href = "https://www.wsl.ch/en/tree-ring-research/the-loetschental-tree-growth-monitoring-transect.html", "Source: Lötschental transect", target = "_blank")
           ) 
         )
@@ -77,7 +78,7 @@ ui <- bootstrapPage(theme = material,
         sidebarLayout(
           sidebarPanel(
             # Select type of trend to plot
-            selectizeInput(inputId = "siteD", label = strong("Site"), choices = c(Setting$Site), selected = "N08"),
+            selectizeInput(inputId = "siteD", label = strong("Site"), choices = c(Setting$Site)[c(10,7,8,3,2,1,11,12,14,9,4,5,6,13)], selected = "N08"),
             
             # # Select date range to be plotted
             # dateRangeInput("dateD", strong("Date range"), start = "2018-01-01", end = "2020-12-31",
@@ -104,7 +105,7 @@ ui <- bootstrapPage(theme = material,
             choices    = unique(format(DENDRO$Index, format="%b%Y")),
             selected   = c(min(format(DENDRO$Index, format="%b%Y")), max(format(DENDRO$Index, format="%b%Y"))),
             grid = FALSE, width = "100%"),
-          plotOutput(outputId = "ggplot.DENDRO", height = "300px"),
+          plotOutput(outputId = "ggplot.DENDRO", height = "500px"),
           # Display only if the smoother is checked
           conditionalPanel(condition = "input.showTWD == true",
             plotOutput(outputId = "ggplot.TRW", height = "300px")),

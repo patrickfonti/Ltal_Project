@@ -14,8 +14,7 @@ library(dplyr)
 library(purrr)
 library(readr)
 library(tibble)
-
-
+library(plotly)
 
 
 ##### 1. Functions ######
@@ -128,6 +127,14 @@ if(Sys.info()['nodename'] == "lema.wsl.ch" | Sys.info()['nodename'] == "lema.loc
 
 # Connect to Ltal clean Folder
 DENDRO<-read_delim("~/Desktop/Ltal/Ltal DATA/Dendro/data/2. Clean/all.DENDRO_havg.txt", delim="\t", col_names=TRUE, col_types = cols(.default = "d", Index = "T"))
+
+## Adjusting dendrometer labels
+DENDRO <- DENDRO %>% rename_with(., ~ gsub("N19_dead", "N19dead_L", ., fixed = TRUE)) %>% 
+  rename_with(., ~ gsub("N13A", "N13D", ., fixed = TRUE)) %>% 
+  rename_with(., ~ gsub("N13B", "N13D", ., fixed = TRUE)) %>% 
+  rename_with(., ~ gsub("S16_conc", "S16conc_L", ., fixed = TRUE)) %>% 
+  rename_with(., ~ gsub("S16Cd_C", "S16cont_L", ., fixed = TRUE))
+names(DENDRO)
 
 # Import data on home/fonti/data from files in the filelist
 upload<- function(x) {read_delim(x, delim=",", col_names = TRUE)}
