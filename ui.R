@@ -19,11 +19,12 @@ material <- bs_theme(
 # bs_theme_preview(material, with_themer = TRUE)
 
 # Add thematic for ggplot
-thematic_on(bg = '#202123', fg = 'white', accent = 'auto', font =  font_spec("Indie Flower", scale = 2))
+thematic_on(bg = '#202123', fg = 'white', accent = 'auto', font = font_spec("Indie Flower", scale = 2))
 
 
 ######### SHINY.UI #########
-ui <- bootstrapPage(theme = material,
+ui <- fluidPage(
+  theme = material,
   tabsetPanel(id = 'tspan',
     
   # Home --------------------------------------------------------------------
@@ -85,35 +86,39 @@ ui <- bootstrapPage(theme = material,
             #   min = "2006-01-01", max = Sys.Date()), #"2021-07-31"
             
             # Select species and dendrometer plotted
-            radioButtons("species", "Select species", choices=c("L","S","both"), selected="L"),
-            radioButtons("type", "Select type", choices=c("p","c","both"), selected="p"),
+            radioButtons("species", strong("Select species"), choices=c("L","S","both"), selected="L"),
+            radioButtons("type", strong("Select type"), choices=c("p","c","both"), selected="p"),
             
             # Select whether to scale
-            checkboxInput(inputId = "showTWD", label = strong("Show TWD"), value = FALSE) #,
+            checkboxInput(inputId = "showTWD", label = strong("Show TWD"), value = FALSE),
+            checkboxInput(inputId = "showdaily", label = strong("Show Daily values"), value = FALSE),
 
-            # Display only if the smoother is checked
-            # conditionalPanel(condition = "input.smoother == true",
-            #   sliderInput(inputId = "f", label = "Smoother span:",
-            #     min = 0.01, max = 1, value = 0.25, step = 0.01,
-            #     animate = animationOptions(interval = 100)),
-            #   HTML("Higher values give more smoothness.")
-            # )
+            # Display only if the showdaily is checked
+            conditionalPanel(condition = "input.showdaily == true",
+              selectizeInput(inputId = "Parameter", label = strong("Select daily parameter"), choices = c("amplitude", "time_min","time_max", "min", "max"), selected = "amplitude"),
+              checkboxGroupInput(inputId = "Sensor", label = strong("Select Tree"), choices = ""), # levels(DAILY.DATA$dmID), selected = DAILY.DATA$dmID[1]),
+              conditionalPanel(condition = "input.showdaily == true",
+                checkboxGroupInput(inputId = "Year", label = strong("Select year(s)"),choices = "")   #levels(DAILY.DATA$year)
+              ))
+                
+            
           ),
           
         mainPanel(
           shinyWidgets::sliderTextInput(inputId = "slider", label = "Time",
             choices    = unique(format(DENDRO$Index, format="%b%Y")),
-            selected   = c(min(format(DENDRO$Index, format="%b%Y")), max(format(DENDRO$Index, format="%b%Y"))),
+            selected   = c("Jan2018", max(format(DENDRO$Index, format="%b%Y"))), # min(format(DENDRO$Index, format="%b%Y"))
             grid = FALSE, width = "100%"),
           plotOutput(outputId = "ggplot.DENDRO", height = "500px"),
-          # Display only if the smoother is checked
-          conditionalPanel(condition = "input.showTWD == true",
-            plotOutput(outputId = "ggplot.TRW", height = "300px")),
-          plotOutput(outputId = "ggplot.CYCLE", height = "300px")
+          # Display only if TWD is checked
+          conditionalPanel(condition = "input.showTWD == true", plotOutput(outputId = "ggplot.TWD", height = "300px")),
+          plotOutput(outputId = "ggplot.CYCLE", height = "300px"),
+          # Display only if TWD is checked
+          conditionalPanel(condition = "input.showdaily == true", plotOutput(outputId = "ggplot.AMPLITUDE", height = "300px"))
           # Select slider date range to be plotted
           
-          ) 
-          )
+          ) )
+          
       ) # END TAB PANEL
   
     

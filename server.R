@@ -5,12 +5,36 @@
 
 # Define server logic required to draw a dygraph plot
 # Define server function
-server <- function(input, output) {
+server <- function(input, output, session) {
   
   # Sourcing tab ------------------------------------------------------------
   source('server/Home_sr.R', local = T)
   source('server/Campbell_sr.R', local = T)
   source('server/Dendrometers_sr.R', local = T)
+  
+  # Update Checkbox tree
+  TreeVar = reactive({
+    if((input$species=="L" | input$species=="S") & (input$type=="c" | input$type=="p")) {
+      mydata = selected_dailyDendro() %>% filter(!is.na(value)) %>% select(dmID) %>% filter(grepl(paste0("_",input$species), dmID), grepl(input$type, dmID)) %>% distinct() %>% unlist() %>% as.vector()
+    }
+    #mydata = unique(selected_dailyDendro()$dmID)}
+    else {
+      if((input$species=="both") & (input$type=="c" | input$type=="p")) {
+      mydata = selected_dailyDendro() %>% filter(!is.na(value)) %>% select(dmID) %>%  filter(grepl(input$type, dmID)) %>% distinct(dmID) %>% unlist() %>% as.vector()
+      } else {
+        if((input$species=="L" | input$species=="S") & input$type=="both") {
+          mydata = selected_dailyDendro() %>% filter(!is.na(value)) %>% select(dmID) %>% filter(grepl(paste0("_",input$species), dmID)) %>% distinct(dmID) %>% unlist() %>% as.vector()
+        } else 
+          if(input$type=="both" & input$species=="both") {
+            mydata = selected_dailyDendro() %>% filter(!is.na(value)) %>% select(dmID) %>% distinct(dmID) %>% unlist() %>% as.vector()
+          }
+    }}
+    })
+  observe({ updateCheckboxGroupInput(session, inputId ="Sensor", choices = TreeVar(), selected = TreeVar() )})
+  
+  # Update Checkbox year
+  YearVar = reactive({ mydata = unique(selected_dailyDendro()$year)})
+  observe({ updateCheckboxGroupInput(session, inputId ="Year", choices = YearVar(), selected = YearVar() )})
   
   # Session end -------------------------------------------------------------
 #  session$onSessionEnded(stopApp)     

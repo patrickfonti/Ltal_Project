@@ -145,5 +145,9 @@ if(Sys.info()['nodename'] == "lema.wsl.ch" | Sys.info()['nodename'] == "lema.loc
   write_csv(x=DENDRO ,path='/home/fonti/data/ltal/DENDRO.csv', col_names = TRUE) 
 }
 
+##### 4. Import daily Dendrometers   #####
+# Connect to Ltal clean Folder
+DAILY.DATA <- read_delim("data/Daily.DENDRO.txt", delim="\t", col_names=TRUE) #, col_types = cols(.default = "d", date = "D", dmID = "c"))
+
 
 
